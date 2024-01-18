@@ -1,15 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { ModalConfirmLogout } from './CerrarSesion/ModalConfirmLogout';
 
 interface MenuUpProps {
   onOpenDrawer: () => void;
 }
 
 export const MenuUp = ({ navigation,transparente=false }:any) => {
+  const [modalEditarAliasVisible, setModalEditarAliasVisible] = useState(false);
+
+  const handlePress2 = () => {
+    // Abre el modal correspondiente
+    setModalEditarAliasVisible(true);
+  };
+
+  const closeModalEditarAlias = () => {
+    // Cierra el modal
+    setModalEditarAliasVisible(false);
+  };
 
   const openDrawer = () => {
     navigation.openDrawer();
@@ -40,10 +52,11 @@ export const MenuUp = ({ navigation,transparente=false }:any) => {
             <TouchableOpacity onPress={handleLogout}>
               <Icon name="notifications-outline" size={30} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout}>
+            <TouchableOpacity onPress={handlePress2}>
               <Icon name="log-out-outline" size={30} color="#fff" />
             </TouchableOpacity>
           </View>
+          <ModalConfirmLogout visible={modalEditarAliasVisible} onClose={closeModalEditarAlias} navigation={navigation}/>
         </View>
         </SafeAreaView>
       );

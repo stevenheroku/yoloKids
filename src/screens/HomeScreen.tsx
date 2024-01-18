@@ -2,7 +2,7 @@
   import { Button, StyleSheet, Text, View } from 'react-native';
   import { MenuUp } from '../components/MenuUp';
 import { Cuentas } from '../components/Cuentas';
-import { OpcionesCuentas } from '../components/OpcionesCuentas';
+import { OpcionesApp } from '../components/OpcionesApp';
 
   export const HomeScreen = ({ navigation }:any) => {
     const handlePress = () => {
@@ -13,7 +13,7 @@ import { OpcionesCuentas } from '../components/OpcionesCuentas';
         <View style={styles.opciones}>
         <View style={styles.container}>
           <MenuUp navigation={navigation} />
-          <OpcionesCuentas navigation={navigation}/>
+          <OpcionesApp navigation={navigation}/>
           
           {/**pasar siempre el navigation al componente de las pantallas para poder navegars */}
           <Cuentas navigation={navigation} />

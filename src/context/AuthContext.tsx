@@ -1,77 +1,82 @@
-import React, {createContext, useEffect, useReducer} from 'react';
-import {LoginData, LoginResponse, RegisterData, Usuario} from '../interfaces/Usuario';
-import {authReducer, AuthState} from './authReducer';
-import cafeApi from '../api/cafeApi';
+// AuthContext.js
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import cafeApi from '../api/apiYoloKids';
 
-type AuthContextProps = {
-  errorMessage: string | null;
-  token: string | null;
-  user: Usuario | null;
-  status: 'checking' | 'authenticated' | 'no-authenticated';
-  signUp: (registerData:RegisterData) => void;
-  signIn: (loginData: LoginData) => void;
-  logOut: () => void;
-  removeError: () => void;
+// Definir los tipos de acciones
+const AuthActionTypes = {
+  SET_USER: 'SET_USER',
+  SIGN_IN: 'SIGN_IN',
+  SIGN_OUT: 'SIGN_OUT',
 };
 
-const authInitialState: AuthState = {
-  status: 'checking',
-  token: null,
-  user: null,
-  errorMessage: '',
+// Función reductora
+const authReducer = (state:any, action:any) => {
+  switch (action.type) {
+    case AuthActionTypes.SET_USER:
+      return { ...state, user: action.payload };
+    case AuthActionTypes.SIGN_IN:
+      return { ...state, isAuthenticated: true };
+    case AuthActionTypes.SIGN_OUT:
+      return { ...state, isAuthenticated: false, user: null };
+    default:
+      return state;
+  }
 };
 
-export const AuthContext = createContext({} as AuthContextProps);
+// Crear el contexto
+export const AuthContext = createContext({} as any);
 
-export const AuthProvider = ({children}: any) => {
-  const [state, dispatch] = useReducer(authReducer, authInitialState);
+// Proveedor del contexto
+export const AuthProvider = ({ children,navigation }:any) => {
+  const [state, dispatch] = useReducer(authReducer, {
+    isAuthenticated: false,
+    user: null,
+  });
 
+  // Verificar la autenticación al cargar la aplicación
   useEffect(() => {
-    checkToken();
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+
+        if (token) {
+          // Realizar una solicitud al backend para verificar la validez del token
+          const response = await cafeApi.post('/verificar-token', { token });
+
+          if (response.data.valid) {
+            // Si el token es válido, establecer el usuario y autenticar
+            dispatch({ type: AuthActionTypes.SET_USER, payload: response.data.user });
+            dispatch({ type: AuthActionTypes.SIGN_IN });
+          } else {
+            // Si el token no es válido, cerrar sesión
+            dispatch({ type: AuthActionTypes.SIGN_OUT });
+          }
+        }
+      } catch (error) {
+        console.error('Error al verificar la autenticación:', error);
+      }
+    };
+
+    checkAuth();
   }, []);
 
-  const checkToken = async () => {
+  // Funciones para realizar el inicio y cierre de sesión
+  const signIn = async ({correo, password}: any) => {
+    console.log('pruebasisi')
     try {
-      const token2 = await AsyncStorage.getItem('token');
-
-      // No hay token, no autenticado
-      if (!token2) {
-        return dispatch({type: 'notAuthenticated'});
-      }
-
-      // Verificar si existe un token válido
-      const resp = await cafeApi.get('/auth/login');
-
-      // Verificar si la respuesta es exitosa (código 200)
-      if (resp.status === 200) {
-        dispatch({
-          type: 'signUp',
-          payload: {token: resp.data.token, user: resp.data.usuario},
-        });
-      } else {
-        // La respuesta no fue exitosa, manejar el error
-        console.log('Error al verificar el token:', resp.data);
-        dispatch({type: 'notAuthenticated'});
-      }
-    } catch (error) {
-      // Error al realizar la verificación, manejar la excepción
-      console.log('Error al verificar el token:', error);
-      dispatch({type: 'notAuthenticated'});
-    }
-  };
-
-  const signIn = async ({correo, password}: LoginData) => {
-    try {
-      const resp = await cafeApi.post<LoginResponse>('/auth/login', {
+      const resp = await cafeApi.post<any>('/auth/login', {
         correo,
         password,
       });
-      dispatch({
-        type: 'signUp',
-        payload: {token: resp.data.token, user: resp.data.usuario},
-      });
+      console.log(resp)
+      dispatch({ type: AuthActionTypes.SIGN_IN,
+        payload: {token: resp.data.token, user: resp.data.usuario}, });
+     
       await AsyncStorage.setItem('token', resp.data.token);
+      setTimeout(() => {
+        navigation.navigate('HomeDrawer');
+      }, 1000); 
       console.log(resp.data.token);
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
@@ -89,55 +94,25 @@ export const AuthProvider = ({children}: any) => {
     }
   };
 
-
-  
-  const signUp =async ({nombre,correo,password}:RegisterData) => {
-    try {
-      const resp = await cafeApi.post<LoginResponse>('/usuarios', {
-        nombre,
-        correo,
-        password,
-      });
-      dispatch({
-        type: 'signUp',
-        payload: {token: resp.data.token, user: resp.data.usuario},
-      });
-      await AsyncStorage.setItem('token', resp.data.token);
-      console.log(resp.data.token);
-    } catch (error: any) {
-      if (error.response && error.response.status === 400) {
-        // El código de estado es 400 (Bad Request)
-        console.log(error.response.data);
-        dispatch({
-          type: 'addError',
-          payload: error.response.data.errors[0].msg || 'Informacion Incorrecta',
-        });
-        // Puedes manejar el error de alguna manera específica para el código de estado 400 aquí
-      } else {
-        // Otro tipo de error
-        console.log('Error:', error.response.data);
-      }
-    }
-  };
-
-  const logOut = async () => {
+  const signOut = async () => {
     await AsyncStorage.removeItem('token');
-    dispatch({type: 'logout'});
-  };
-  const removeError = () => {
-    dispatch({type: 'removeError'});
+    dispatch({ type: AuthActionTypes.SIGN_OUT });
   };
 
   return (
     <AuthContext.Provider
       value={{
-        ...state,
+        state,
         signIn,
-        signUp,
-        logOut,
-        removeError,
-      }}>
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+// Función para utilizar el contexto en componentes
+export const useAuth = () => {
+  return useContext(AuthContext);
 };

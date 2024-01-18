@@ -30,41 +30,46 @@ const DATA = [
     title: 'Operaciones Programadas',
     icono: 'calendar-outline',
     type: 'monetaria',
-    direction: 'OperacionProgramdas',
+    direction: 'OperacionProgramadas',
   },
   {
     id: '5',
     title: 'Ahorro Programado',
     icono: 'cash-outline',
     type: 'monetaria',
-    direction: 'DetalleCuenta',
+    direction: 'AhorroProgramado',
   },
   {
     id: '6',
     title: 'Contacto',
     icono: 'call-outline',
     type: 'monetaria',
-    direction: 'DetalleCuenta',
+    direction: 'Contacto',
   },
   {
     id: '7',
     title: 'Simulador tasa de cambio',
     icono: 'chevron-expand-outline',
     type: 'monetaria',
-    direction: 'DetalleCuenta',
+    direction: 'SimuladorTasaCambio',
   },
   {
     id: '8',
     title: 'Tutoriales',
     icono: 'videocam-outline',
     type: 'monetaria',
-    direction: 'DetalleCuenta',
+    direction: 'Tutoriales',
+  },
+  {
+    id: '9',
+    title: 'Tutoriales',
+    icono: 'videocam-outline',
+    type: 'monetaria',
+    direction: 'Tutoriales',
   }
 ];
 
 const Item = ({title, type, navigation, direction, icono}: any) => {
-  console.log('Icono:', icono); // Agrega esta línea para depurar
-  console.log('Icono:', type); // Agrega esta línea para depurar
 
   const handlePress = () => {
     // Navegar a la vista deseada con parámetros si es necesario

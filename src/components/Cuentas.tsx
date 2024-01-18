@@ -17,14 +17,14 @@ const DATA = [
   {
     id: '3',
     type: 'ahorro',
-    title: 'cuenta de ahorros 51514225254',
+    title: 'Cuenta de ahorros 51514225254',
   },
 ];
 
-const Item = ({title, type, navigation}: any) => {
+const Item = ({title, type, navigation,item}: any) => {
   const handlePress = () => {
     // Navegar a la vista deseada con parámetros si es necesario
-    navigation.navigate('DetalleCuenta');
+    navigation.navigate('DetalleCuenta', { cuenta: item });
   };
 
   const renderIcon = () => {
@@ -65,7 +65,7 @@ export const Cuentas = ({navigation}: any) => {
       <FlatList
         data={DATA}
         renderItem={({item}) => (
-          <Item title={item.title} type={item.type} navigation={navigation} />
+          <Item title={item.title} type={item.type} navigation={navigation} item={item}/>
         )}
         keyExtractor={item => item.id}
       />
@@ -76,7 +76,9 @@ export const Cuentas = ({navigation}: any) => {
 const styles = StyleSheet.create({
   formContainer: {
     backgroundColor: '#262626',
-    padding: 40,
+    padding: 35,
+    paddingRight:25,
+    paddingLeft:25,
     width: '100%',
     height: '65%', // Ajusta según el porcentaje deseado
     marginTop: 'auto',
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    padding: 20,
     borderBottomWidth: 1.5,
     borderBottomColor: 'white', // Línea divisoria blanca
   },
