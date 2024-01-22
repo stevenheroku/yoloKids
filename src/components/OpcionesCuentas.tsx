@@ -84,6 +84,7 @@ export const OpcionesCuentas = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <FlatList
+      overScrollMode="never"
         data={opcionesData}
         showsHorizontalScrollIndicator={false}
         horizontal

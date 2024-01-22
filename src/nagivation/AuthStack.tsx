@@ -30,12 +30,55 @@ import { Detalle } from '../screens/OpcionesCuenta/Detalle';
 import { MenuComponent23 } from '../components/Menu/MenuComponent23';
 import ThreeSectionsView from '../components/Menu/ThreeSectionsView';
 import { DetalleCuenta } from '../screens/DetalleCuenta';
+import { useAuth } from '../context/AuthContext';
 
 const Stack = createStackNavigator();
 
 export const AuthStack = () => {
     const { width } = useWindowDimensions();
+     const { state, signIn, signOut } = useAuth();
 
+     let stackScreens;
+
+     if (state.isAuthenticated) 
+      {
+      stackScreens = (
+        <>
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        </>
+      );
+     }
+     else{
+      stackScreens = (
+        <>
+            <Stack.Screen name="LoginScreen" component={LoginScreen}  />
+            <Stack.Screen name="HomeDrawer" component={HomeDrawer}  />
+            <Stack.Screen name="DetalleCuenta" component={DetalleCuenta} />
+            <Stack.Screen name="TransferenciasPropias" component={TransferenciasPropias} />
+            <Stack.Screen name="PagosTarjeta" component={PagosTarjeta} />
+            <Stack.Screen name="TransferenciaMoviles" component={TransferenciaMoviles} />
+            <Stack.Screen name="TransferenciasPersonas" component={TransferenciasPersonas} />
+            <Stack.Screen name="Settigns" component={Settigns} />
+            <Stack.Screen name="Gestiones" component={Gestiones} />
+            <Stack.Screen name="SolicitarProducto" component={SolicitarProducto} />
+            <Stack.Screen name="OperacionProgramadas" component={OperacionProgramadas} />
+            <Stack.Screen name="AhorroProgramado" component={AhorroProgramado} />
+            <Stack.Screen name="Contacto" component={Contacto} />
+            <Stack.Screen name="SimuladorTasaCambio" component={SimuladorTasaCambio} />
+            <Stack.Screen name="Tutoriales" component={Tutoriales} />
+            <Stack.Screen name="Transferir" component={Transferir} />
+            <Stack.Screen name="Pagar" component={Pagar} />
+            <Stack.Screen name="AhorroPorConsumo" component={AhorroPorConsumo} />
+            <Stack.Screen name="Retirar" component={Retirar} />
+            <Stack.Screen name="TarjetaDebito" component={TarjetaDebito} />
+            <Stack.Screen name="Ajustes" component={Ajustes} />
+            <Stack.Screen name="Detalle" component={Detalle} />
+            <Stack.Screen name="MenuComponent23" component={MenuComponent23} />
+            <Stack.Screen name="ThreeSectionsView" component={ThreeSectionsView} />
+        </>
+      );
+     }
     return (
       <Stack.Navigator initialRouteName="LoginScreen"
       
@@ -45,33 +88,45 @@ export const AuthStack = () => {
           backgroundColor:'white'
         },
       }}>
-      <Stack.Screen name="LoginScreen" component={LoginScreen}  />
-      <Stack.Screen name="HomeDrawer" component={HomeDrawer}  />
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-      <Stack.Screen name="DetalleCuenta" component={DetalleCuenta} />
-      <Stack.Screen name="TransferenciasPropias" component={TransferenciasPropias} />
-      <Stack.Screen name="PagosTarjeta" component={PagosTarjeta} />
-      <Stack.Screen name="TransferenciaMoviles" component={TransferenciaMoviles} />
-      <Stack.Screen name="TransferenciasPersonas" component={TransferenciasPersonas} />
-      <Stack.Screen name="Settigns" component={Settigns} />
-      <Stack.Screen name="Gestiones" component={Gestiones} />
-      <Stack.Screen name="SolicitarProducto" component={SolicitarProducto} />
-      <Stack.Screen name="OperacionProgramadas" component={OperacionProgramadas} />
-      <Stack.Screen name="AhorroProgramado" component={AhorroProgramado} />
-      <Stack.Screen name="Contacto" component={Contacto} />
-      <Stack.Screen name="SimuladorTasaCambio" component={SimuladorTasaCambio} />
-      <Stack.Screen name="Tutoriales" component={Tutoriales} />
+        {/* {
+          if()
 
-      <Stack.Screen name="Transferir" component={Transferir} />
-      <Stack.Screen name="Pagar" component={Pagar} />
-      <Stack.Screen name="AhorroPorConsumo" component={AhorroPorConsumo} />
-      <Stack.Screen name="Retirar" component={Retirar} />
-      <Stack.Screen name="TarjetaDebito" component={TarjetaDebito} />
-      <Stack.Screen name="Ajustes" component={Ajustes} />
-      <Stack.Screen name="Detalle" component={Detalle} />
-      <Stack.Screen name="MenuComponent23" component={MenuComponent23} />
-      <Stack.Screen name="ThreeSectionsView" component={ThreeSectionsView} />
-
+          state.isAuthenticated ?  (
+            <> <Stack.Screen name="LoginScreen" component={LoginScreen}  />
+      
+            <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> </>
+          ):
+          (
+            <>  
+            <Stack.Screen name="LoginScreen" component={LoginScreen}  />
+            <Stack.Screen name="HomeDrawer" component={HomeDrawer}  />
+            <Stack.Screen name="DetalleCuenta" component={DetalleCuenta} />
+            <Stack.Screen name="TransferenciasPropias" component={TransferenciasPropias} />
+            <Stack.Screen name="PagosTarjeta" component={PagosTarjeta} />
+            <Stack.Screen name="TransferenciaMoviles" component={TransferenciaMoviles} />
+            <Stack.Screen name="TransferenciasPersonas" component={TransferenciasPersonas} />
+            <Stack.Screen name="Settigns" component={Settigns} />
+            <Stack.Screen name="Gestiones" component={Gestiones} />
+            <Stack.Screen name="SolicitarProducto" component={SolicitarProducto} />
+            <Stack.Screen name="OperacionProgramadas" component={OperacionProgramadas} />
+            <Stack.Screen name="AhorroProgramado" component={AhorroProgramado} />
+            <Stack.Screen name="Contacto" component={Contacto} />
+            <Stack.Screen name="SimuladorTasaCambio" component={SimuladorTasaCambio} />
+            <Stack.Screen name="Tutoriales" component={Tutoriales} />
+            <Stack.Screen name="Transferir" component={Transferir} />
+            <Stack.Screen name="Pagar" component={Pagar} />
+            <Stack.Screen name="AhorroPorConsumo" component={AhorroPorConsumo} />
+            <Stack.Screen name="Retirar" component={Retirar} />
+            <Stack.Screen name="TarjetaDebito" component={TarjetaDebito} />
+            <Stack.Screen name="Ajustes" component={Ajustes} />
+            <Stack.Screen name="Detalle" component={Detalle} />
+            <Stack.Screen name="MenuComponent23" component={MenuComponent23} />
+            <Stack.Screen name="ThreeSectionsView" component={ThreeSectionsView} /></>
+          )
+        }
+      
+       */}
+      {stackScreens}
     </Stack.Navigator>
       );
 }
